@@ -16,7 +16,7 @@ spec:
         app: events-external
     spec:
       containers:
-      - image: adkarnam/external_app_nodejs:v.02
+      - image: akarnam/external_app_nodejs:v0.2
         name: events-external
         imagePullPolicy: "Always"
         env:
