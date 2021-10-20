@@ -22,6 +22,7 @@ spec:
         env:
         - name: SERVER
           value: "http://events-internal"
+        
         resources:
           requests:
             memory: "128Mi"
