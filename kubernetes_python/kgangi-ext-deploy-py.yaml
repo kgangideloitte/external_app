@@ -2,26 +2,28 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: events-external
-  name: events-external
+    app: events-external-py
+  name: events-external-py
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: events-external
+      app: events-external-py
   strategy: {}
   template:
     metadata:
       labels:
-        app: events-external
+        app: events-external-py
     spec:
       containers:
-      - image: kcgjr/sample-external:v0.1
-        name: events-external
+      - image: kcgjr/pythonclient:v0.1
+        name: events-external-py
         imagePullPolicy: "Always"
         env:
         - name: SERVER
           value: "http://events-internal"
+        - name: PORT
+          value: "5000"
         resources:
           requests:
             memory: "128Mi"
