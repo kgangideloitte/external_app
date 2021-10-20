@@ -16,7 +16,7 @@ spec:
         app: events-external-node-react
     spec:
       containers:
-      - image: kcgjr/reactclient:v0.3
+      - image: kcgjr/reactclient:v0.4
         name: events-external-node-react
         imagePullPolicy: "Always"
         env:
