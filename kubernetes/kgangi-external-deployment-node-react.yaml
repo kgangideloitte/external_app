@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: events-external-node-react
+  name: events-external-node-react
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: events-external-node-react
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: events-external-node-react
+    spec:
+      containers:
+      - image: kcgjr/reactclient:v0.3
+        name: events-external-node-react
+        imagePullPolicy: "Always"
+        env:
+        - name: SERVER
+          value: "http://events-internal"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "0.1"
+          limits:
+            memory: "256Mi"
+            cpu: "0.2"
+status: {}
