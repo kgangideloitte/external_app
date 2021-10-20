@@ -16,7 +16,7 @@ spec:
         app: events-external-py
     spec:
       containers:
-      - image: akarnam/pythin_app:v0.1
+      - image: akarnam/python_app:v0.1
         name: events-external-py
         imagePullPolicy: "Always"
         env:
