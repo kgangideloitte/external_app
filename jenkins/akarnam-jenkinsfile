@@ -1,0 +1,70 @@
+pipeline {
+    agent any 
+    environment {
+        registryCredential = 'docker-id'
+        imageName = 'akarnam/external_app_nodejs'
+        dockerImage = ''
+        }
+    stages {
+        stage('Run the tests') {
+             agent {
+                docker { 
+                    image 'node:14-alpine'
+                    args '-e HOME=/tmp -e NPM_CONFIG_PREFIX=/tmp/.npm'
+                    reuseNode true
+                }
+            }
+            steps {
+                echo 'Retrieve source from github. run npm install and npm test' 
+                git  branch: 'main',
+					url: 'https://github.com/ravishiramwar/SWAT_Event_external.git'
+					echo 'Do I have the file'
+					sh " ls -la"
+					echo 'Run npm install'
+					sh "npm install"
+					echo 'run npm test'
+					sh "npm test"
+            }
+        }
+        stage('Building image') {
+             steps{
+              script {
+                    echo 'build the image' 
+                      sh 'docker --version'
+                      dockerImage = docker.build imageName
+                      //sh 'docker build -t $imageName:$BUILD_NUMBER .'
+					  sh 'docker images'
+                }
+            }
+            }
+        stage('Push Image') {
+            steps{
+                script {
+                    echo 'push the image to docker hub'
+					docker.withRegistry( '', registryCredential ) {
+						dockerImage.push("$BUILD_NUMBER")
+					}
+                }
+            }
+        }     
+         stage('deploy to k8s') {
+             agent {
+                docker { 
+                    image 'google/cloud-sdk:latest'
+                    args '-e HOME=/tmp'
+                    reuseNode true
+                        }
+                    }
+            steps {
+                echo 'Get credentails'
+                sh 'gcloud container clusters get-credentials cluster-devops1 --zone us-central1-a --project dtc-102021-u118'
+             }
+        }     
+        stage('Remove local docker image') {
+            steps{
+                sh "docker rmi $imageName:latest"
+                sh "docker rmi $imageName:$BUILD_NUMBER"
+            }
+        }
+    }
+}
