@@ -58,6 +58,7 @@ pipeline {
             steps {
                 echo 'Get credentails'
                 sh 'gcloud container clusters get-credentials kgangi-cluster --zone us-central1-b --project dtc-102021-u108'
+                sh 'kubectl set image deployment/events-external events-external=$imageName:$BUILD_NUMBER --record'
              }
         }     
         stage('Remove local docker image') {
