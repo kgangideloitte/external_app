@@ -26,6 +26,16 @@ pipeline {
 				sh "npm test" 
             }
         }
+        stage('SonarQube analysis') {
+            steps {
+                script {
+                def scannerHome = tool 'SonarQube-Scanner';
+                    withSonarQubeEnv() {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
+        }
         stage('Building image') {
             steps{
                 script {
