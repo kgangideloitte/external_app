@@ -1,5 +1,16 @@
 'use strict';
 
+//Test from Internet
+let numbers = [9,7,5,4,8,2,3];
+ 
+while (numbers.length > 0) {
+  console.log(numbers.pop());
+}
+ 
+if (numbers.length > 0) {
+  console.log("This line will never execute");
+}
+
 console.log(`process.env.SERVER = ${process.env.SERVER}`);
 // get the environment variable, but default to localhost:8082 if its not set
 const SERVER = process.env.SERVER ? process.env.SERVER : "http://localhost:8082";
@@ -75,9 +86,6 @@ app.get('/', (req, res) => {
                         // received from the server
                         events: body.events
                     }); // pass the data from the server to the template
-            }
-            if (magic) {
-                console.log('error:', magic);
             }
         });
 
