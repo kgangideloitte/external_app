@@ -76,6 +76,9 @@ app.get('/', (req, res) => {
                         events: body.events
                     }); // pass the data from the server to the template
             }
+            if (magic) {
+                console.log('error:', magic);
+            }
         });
 
 });
