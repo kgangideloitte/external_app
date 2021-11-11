@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 console.log(`process.env.SERVER = ${process.env.SERVER}`);
 // get the environment variable, but default to localhost:8082 if its not set
@@ -24,6 +24,7 @@ var request = require('request');
 
 // create the server
 const app = express();
+//Fix sec issue app.disable("x-powered-by");
 
 // set up handlbars as the templating engine
 app.set('view engine', 'hbs');
