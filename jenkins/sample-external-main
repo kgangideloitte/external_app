@@ -1,13 +1,13 @@
 pipeline {
     agent any 
     environment {
-        registryCredential = 'docker-hub'
+        registryCredential = 'docker-hub-creds'
         imageName = 'kcgjr/sample-external'
         dockerImage = ''
         }
     stages {
         stage('Run the tests') {
-             agent {
+            agent {
                 docker { 
                     image 'node:14-alpine'
                     args '-e HOME=/tmp -e NPM_CONFIG_PREFIX=/tmp/.npm'
@@ -17,13 +17,30 @@ pipeline {
             steps {
                 echo 'Retrieve source from github. run npm install and npm test'
 				git branch: 'main',
-					url: 'https://github.com/ravishiramwar/SWAT_Event_external.git'
+					url: 'https://github.com/kgangideloitte/external_app.git'
 				echo 'Do I have the files?'
 				sh "ls -la"
 				echo 'Run npm install'
 				sh "npm install"
 				echo 'Run npm test'
 				sh "npm test" 
+            }
+        }
+        stage('SonarQube analysis') {
+            steps {
+                script {
+                def scannerHome = tool 'SonarQube-Scanner';
+                    withSonarQubeEnv() {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
+        }
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
         stage('Building image') {
@@ -42,29 +59,29 @@ pipeline {
                 script {
                     echo 'push the image to docker hub'
 					docker.withRegistry( '', registryCredential ) {
-						dockerImage.push("$BUILD_NUMBER")
+						dockerImage.push("v$BUILD_NUMBER")
 					}
                 }
             }
         }     
-         stage('deploy to k8s') {
-             agent {
+        stage('deploy to k8s') {
+            agent {
                 docker { 
                     image 'google/cloud-sdk:latest'
                     args '-e HOME=/tmp'
                     reuseNode true
-                        }
-                    }
+                }
+            }
             steps {
                 echo 'Get credentails'
-                sh 'gcloud container clusters get-credentials kgangi-cluster --zone us-central1-b --project dtc-102021-u108'
-                sh 'kubectl set image deployment/events-external events-external=$imageName:$BUILD_NUMBER --record'
-             }
+                // sh 'gcloud container clusters get-credentials kgangi-cluster --zone us-central1-b --project dtc-102021-u108'
+                // sh 'kubectl set image deployment/events-internal events-internal=$imageName:v$BUILD_NUMBER --record'
+            }
         }     
         stage('Remove local docker image') {
             steps{
                 sh "docker rmi $imageName:latest"
-                sh "docker rmi $imageName:$BUILD_NUMBER"
+                sh "docker rmi $imageName:v$BUILD_NUMBER"
             }
         }
     }
