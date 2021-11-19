@@ -74,7 +74,7 @@ pipeline {
             }
             steps {
                 echo 'Get credentails'
-                sh 'gcloud container clusters get-credentials capstone-project-cluster --zone us-central1-c --project studied-groove-330815'
+                sh 'gcloud container clusters get-credentials capstone-project-cluster --zone us-east1-c --project studied-groove-330815'
                 sh 'kubectl set image deployment/events-external events-external=$imageName:v$BUILD_NUMBER --record -n dev-branch'
             }
         }     
