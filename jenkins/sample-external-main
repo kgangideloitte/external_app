@@ -31,7 +31,7 @@ pipeline {
                 script {
                 def scannerHome = tool 'SonarQube-Scanner';
                     withSonarQubeEnv() {
-                        sh "${scannerHome}/bin/sonar-scanner"
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sample-external-main"
                     }
                 }
             }
@@ -74,8 +74,8 @@ pipeline {
             }
             steps {
                 echo 'Get credentails'
-                // sh 'gcloud container clusters get-credentials kgangi-cluster --zone us-central1-b --project dtc-102021-u108'
-                // sh 'kubectl set image deployment/events-internal events-internal=$imageName:v$BUILD_NUMBER --record'
+                sh 'gcloud container clusters get-credentials capstone-project-cluster --zone us-east1-c --project studied-groove-330815'
+                sh 'kubectl set image deployment/events-external events-external=$imageName:v$BUILD_NUMBER --record -n main-branch'
             }
         }     
         stage('Remove local docker image') {
