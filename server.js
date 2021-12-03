@@ -24,7 +24,7 @@ var request = require('request');
 
 // create the server
 const app = express();
-app.disable("x-powered-by"); //Fix sec issue
+// app.disable("x-powered-by"); //Fix sec issue
 
 // set up handlbars as the templating engine
 app.set('view engine', 'hbs');
